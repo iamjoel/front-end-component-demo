@@ -1,12 +1,34 @@
 <template>
 <div class="main">
+  <sc-search-condition>
+    <sc-search-condition-item
+    label="名称">
+      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    </sc-search-condition-item>
+    <sc-search-condition-item
+    label="名称">
+      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    </sc-search-condition-item>
+    <sc-search-condition-item
+    label="名称">
+      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    </sc-search-condition-item>
+    <sc-search-condition-item
+    label="名称">
+      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    </sc-search-condition-item>
+    <sc-search-condition-item
+    label="名称">
+      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    </sc-search-condition-item>
+  </sc-search-condition>
   <el-row :gutter="20">
-    <el-col :span="6"><div class="grid-content">
+    <el-col :md="{span:6}">
       <label for="">
         xxx
         <el-input v-model="value" placeholder="请输入内容"></el-input>
       </label>
-    </div></el-col>
+    </el-col>
     <el-col :span="6"><div class="grid-content">
       <label for="">
         好吃的<br>
@@ -22,9 +44,9 @@
     <el-col :span="6"><div class="grid-content"></div></el-col>
     <el-col :span="6"><div class="grid-content"></div></el-col>
   </el-row>
-  <div class="block">
+  <el-row type="flex" justify="end">
     <el-button type="primary" @click="search" class="right">搜索</el-button>
-  </div>
+  </el-row>
   <el-table
     :data="tableData"
     border
@@ -106,7 +128,14 @@
 
 <script>
 import Vue from 'vue'
+import SCSearchCondition from '@/components/search-condition/search-condition'
+import SCSearchConditionItem from '@/components/search-condition/search-condition-item'
+console.log(SCSearchCondition)
 export default {
+  components: {
+    'sc-search-condition': SCSearchCondition,
+    'sc-search-condition-item': SCSearchConditionItem
+  },
   data () {
     return {
       tableData: [],
