@@ -1,52 +1,47 @@
 <template>
 <div class="main">
-  <sc-search-condition>
+  <sc-search-condition @search="search">
     <sc-search-condition-item
     label="名称">
-      <el-input v-model="value" placeholder="请输入内容"></el-input>
+      <el-input v-model="searchConditions.name" placeholder="请输入内容"></el-input>
     </sc-search-condition-item>
     <sc-search-condition-item
-    label="名称">
-      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    label="类型">
+      <el-select v-model="searchConditions.type" placeholder="请选择">
+        <el-option
+          v-for="item in options"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </sc-search-condition-item>
     <sc-search-condition-item
-    label="名称">
-      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    label="时间">
+      <el-col :span="11">
+        <el-date-picker v-model="searchConditions.date" type="date" placeholder="选择日期" style="width: 100%;" format="yyyy/MM/DD"></el-date-picker>
+      </el-col>
+      <el-col class="line" :span="2" style="text-align: center;">-</el-col>
+      <el-col :span="11">
+        <el-time-picker v-model="searchConditions.time" type="fixed-time" placeholder="选择时间" style="width: 100%;"></el-time-picker>
+      </el-col>
     </sc-search-condition-item>
     <sc-search-condition-item
-    label="名称">
-      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    label="喜好">
+      <el-checkbox-group v-model="searchConditions.hobby">
+        <el-checkbox label="喜好1" name="type"></el-checkbox>
+        <el-checkbox label="喜好2" name="type"></el-checkbox>
+      </el-checkbox-group>
     </sc-search-condition-item>
     <sc-search-condition-item
-    label="名称">
-      <el-input v-model="value" placeholder="请输入内容"></el-input>
+    label="性别">
+      <el-radio class="radio" v-model="searchConditions.gender" label="1">男</el-radio>
+      <el-radio class="radio" v-model="searchConditions.gender" label="2">女</el-radio>
     </sc-search-condition-item>
+    <div slot="more-op">
+      <el-button type="success" icon="plus">新增</el-button>
+      <el-button type="success">其他</el-button>
+    </div>
   </sc-search-condition>
-  <el-row :gutter="20">
-    <el-col :md="{span:6}">
-      <label for="">
-        xxx
-        <el-input v-model="value" placeholder="请输入内容"></el-input>
-      </label>
-    </el-col>
-    <el-col :span="6"><div class="grid-content">
-      <label for="">
-        好吃的<br>
-        <el-select v-model="value2" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </label>
-    </div></el-col>
-    <el-col :span="6"><div class="grid-content"></div></el-col>
-    <el-col :span="6"><div class="grid-content"></div></el-col>
-  </el-row>
-  <el-row type="flex" justify="end">
-    <el-button type="primary" @click="search" class="right">搜索</el-button>
-  </el-row>
   <el-table
     :data="tableData"
     border
@@ -107,12 +102,11 @@
       width="180"
       fixed="right">
       <template scope="scope">
-        <el-button @click="view(scope.row.id)" type="text" size="small">查看</el-button>
+        <el-button type="primary" icon="view" size="small" @click="view(scope.row.id)"></el-button>
       </template>
     </el-table-column>
   </el-table>
-  <div class="block">
-    {{pager.current}}
+  <el-row type="flex" justify="end">
     <el-pagination
         @current-change="handleCurrentChange"
         :current-page="pager.current"
@@ -121,8 +115,7 @@
         :total="pager.total"
         class="right">
       </el-pagination>
-    }
-  </div>
+  </el-row>
 </div>
 </template>
 
@@ -138,6 +131,14 @@ export default {
   },
   data () {
     return {
+      searchConditions: {
+        name: '',
+        type: '',
+        date: null, // 这边赋值有问题。。。 2017/03/22
+        time: new Date(), // 这样赋值，为了不报错。
+        hobby: [],
+        gender: '1'
+      },
       tableData: [],
       pager: {
         current: 5,
@@ -170,6 +171,8 @@ export default {
       this.pager.total += 10
     },
     fectch () {
+      console.log(JSON.stringify(this.searchConditions))
+      // debugger
       var randomNum = (function () {
         return Math.floor(Math.random() * 10)
       })()
@@ -192,11 +195,9 @@ export default {
       })
     },
     search () {
-      this.fectch().then(function ({total, data}) {
+      this.fectch(this.searchConditions).then(function ({total, data}) {
         this.pager.current = 1
-        // this.pager.current = Math.floor(Math.random() * 10)
         this.pager.total = total
-        // debugger
         this.tableData = data
       }.bind(this))
     },
@@ -219,15 +220,13 @@ export default {
     }
   },
   mounted () {
+    this.searchConditions.date = '2017/5/3'
+    this.searchConditions.time = new Date('2017/3/4 04:34:44')
     this.search()
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.block{
-  display: flex;
-  justify-content: flex-end;
-}
+
 </style>

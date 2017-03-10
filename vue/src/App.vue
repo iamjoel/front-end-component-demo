@@ -26,7 +26,7 @@
         </el-menu>
       </el-col>
       <el-col :span="18">
-        <router-view></router-view>
+        <router-view id="main-content"></router-view>
       </el-col>
     </el-row>
   </div>
@@ -48,5 +48,12 @@ html, body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+}
+#main-content{
+  padding: 10px 10px 0 0;
+}
+.el-table,.el-pagination {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>
