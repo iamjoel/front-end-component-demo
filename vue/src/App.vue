@@ -1,13 +1,13 @@
 <template>
   <div id="app">
     <el-menu theme="dark" :default-active="'2'" class="el-menu-demo" mode="horizontal">
-      <el-menu-item index="1">处理中心</el-menu-item>
-      <el-menu-item index="2"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+      <el-menu-item index="1"><router-link to="/">首页</router-link></el-menu-item>
+      <!-- <el-menu-item index="2"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item> -->
     </el-menu>
     <el-row :gutter="20">
       <el-col :span="6">
         <el-menu class="el-menu-vertical-demo" theme="dark">
-          <el-menu-item index="2"><router-link to="/form">表单页</router-link></el-menu-item>
+          <el-menu-item index="2"><router-link to="/limit">权限页</router-link></el-menu-item>
           <el-submenu index="1">
             <template slot="title">测试一</template>
             <el-menu-item-group title="分组一">
