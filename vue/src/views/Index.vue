@@ -116,6 +116,34 @@
         class="right">
       </el-pagination>
   </el-row>
+
+  <h2>可编辑的table</h2>
+  <el-alert
+    title="按回车到下一列，最后一列按回车到下一行。双击编辑。"
+    type="info"
+    description=""
+    show-icon>
+  </el-alert>
+  <!-- 记录行和列的下标，控制表单的编辑 -->
+  <el-table
+    :data="editTableData"
+    border
+    stripe
+    style="width: 100%"
+     @cell-click="cellClick"
+  >
+    <el-table-column v-for="(item, index) in editCols"
+      :prop="item.prop"
+      :label="item.label">
+      <template scope="scope" >
+        <div v-show="!(currEditLoc.row == scope.$index && currEditLoc.col == index)" @click="editItem(scope.$index, index, scope.row[item.prop], $event)">
+          {{scope.row[item.prop]}}</div>
+          <input type="text" v-model="editContent" v-show="currEditLoc.row == scope.$index && currEditLoc.col == index" @keyup.enter="editNext(scope.$index, index, scope.row, item.prop)">
+      </template>
+
+    </el-table-column>
+
+  </el-table>
 </div>
 </template>
 
@@ -162,7 +190,30 @@ export default {
         label: '北京烤鸭'
       }],
       value: '',
-      value2: ''
+      value2: '',
+      editTableData: [{
+        name: 'Joel',
+        des: 'xxx',
+        other: 'aa'
+      }, {
+        name: 'Joel1',
+        des: 'xxx',
+        other: 'aa'
+      }],
+      editCols: [{
+        label: '姓名',
+        prop: 'name'
+      }, {
+        label: '描述',
+        prop: 'des'
+      }, {
+        label: '其他',
+        prop: 'other'
+      }],
+      currEditLoc: {
+        row: -1,
+        col: -1
+      }
     }
   },
   methods: {
@@ -217,6 +268,25 @@ export default {
     },
     formatter (row) {
       return row.address
+    },
+    editNext (row, col, rowData, prop) {
+      rowData[prop] = this.editContent
+      this.currEditLoc = {
+        row,
+        col: col + 1
+      }
+    },
+    editItem (row, col, val, event) {
+      this.currEditLoc = {
+        row,
+        col
+      }
+      this.editContent = val
+      Vue.nextTick(() => {
+        event.currentTarget.nextElementSibling.focus()
+      })
+    },
+    cellClick (row, col, cell) {
     }
   },
   mounted () {
