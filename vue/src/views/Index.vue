@@ -136,9 +136,9 @@
       :prop="item.prop"
       :label="item.label">
       <template scope="scope" >
-        <div v-show="!(currEditLoc.row == scope.$index && currEditLoc.col == index)" @click="editItem(scope.$index, index, scope.row[item.prop], $event)">
+          <div v-show="!(currEditLoc.row == scope.$index && currEditLoc.col == index)" @dblclick="editItem(scope.$index, index, scope.row[item.prop], $event)" style="min-height:24px">
           {{scope.row[item.prop]}}</div>
-          <input type="text" v-model="editContent" v-show="currEditLoc.row == scope.$index && currEditLoc.col == index" @keyup.enter="editNext(scope.$index, index, scope.row, item.prop)">
+          <input type="text" v-model="editContent" v-show="currEditLoc.row == scope.$index && currEditLoc.col == index" @keyup.enter="editNext(scope.$index, index, scope.row, item.prop)" v-focus="currEditLoc.row == scope.$index && currEditLoc.col == index" @blur="blur">
       </template>
 
     </el-table-column>
@@ -151,18 +151,20 @@
 import Vue from 'vue'
 import SCSearchCondition from '@/components/search-condition/search-condition'
 import SCSearchConditionItem from '@/components/search-condition/search-condition-item'
-console.log(SCSearchCondition)
+import { focus } from '@/directives/focus'
+
 export default {
   components: {
     'sc-search-condition': SCSearchCondition,
     'sc-search-condition-item': SCSearchConditionItem
   },
+  directives: { focus: focus },
   data () {
     return {
       searchConditions: {
         name: '',
         type: '',
-        date: null, // 这边赋值有问题。。。 2017/03/22
+        date: new Date(), // 这边赋值有问题。。。 2017/03/22
         time: new Date(), // 这样赋值，为了不报错。
         hobby: [],
         gender: '1'
@@ -213,7 +215,8 @@ export default {
       currEditLoc: {
         row: -1,
         col: -1
-      }
+      },
+      notBlur: false // 辅助控制是否要让当前编辑框的失去焦点的状态。回车进入下一列，也会失去焦点，触发事件会在下个列获得焦点之后执行，导致下个列获得不到焦点。
     }
   },
   methods: {
@@ -271,10 +274,37 @@ export default {
     },
     editNext (row, col, rowData, prop) {
       rowData[prop] = this.editContent
-      this.currEditLoc = {
+      var nextLocInfo = {
         row,
         col: col + 1
       }
+      if (nextLocInfo.col > (this.editCols.length - 1)) {
+        nextLocInfo.row++
+        nextLocInfo.col = 0
+        // 新建一行
+        if (nextLocInfo.row > (this.editTableData.length - 1)) {
+          this.editTableData.push({
+            name: '',
+            des: '',
+            other: ''
+          })
+        }
+      }
+      var vm = this
+      this.notBlur = true
+      vm.currEditLoc = nextLocInfo
+      console.log('to next col')
+      var colName = vm.editCols[vm.currEditLoc.col].prop
+      vm.editContent = vm.editTableData[vm.currEditLoc.row][colName]
+    },
+    blur () {
+      if (!this.notBlur) {
+        this.currEditLoc = {
+          row: -1,
+          col: -1
+        }
+      }
+      this.notBlur = false
     },
     editItem (row, col, val, event) {
       this.currEditLoc = {
@@ -290,7 +320,7 @@ export default {
     }
   },
   mounted () {
-    this.searchConditions.date = '2017/5/3'
+    this.searchConditions.date = new Date('2017/5/13')
     this.searchConditions.time = new Date('2017/3/4 04:34:44')
     this.search()
   }
